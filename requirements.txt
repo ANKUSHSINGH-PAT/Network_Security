@@ -4,5 +4,7 @@ pandas
 numpy
 scikit-learn
 certifi
+pymongo[srv]
+pymongo
 
 #-e .
