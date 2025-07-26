@@ -14,9 +14,10 @@ from sklearn.model_selection import train_test_split
 
 # Ensure MONGO_URI is loaded
 load_dotenv()
-MONGO_URL = os.getenv("MONGO_URL")
+MONGO_URL = os.getenv("MONGODB_URL")
+print("MONGO_URL:", MONGO_URL)
 if not MONGO_URL:
-    raise ValueError("MONGO_URI environment variable is not set.")
+    raise ValueError("MONGODB_URI environment variable is not set.")
 
 
 class DataIngestion:
@@ -31,20 +32,25 @@ class DataIngestion:
         try:
             logger.info("Connecting to MongoDB and fetching data...")
             db = self.mongo_client[self.data_ingestion_config.database_name]
-            collection = db[self.data_ingestion_config.collection_name]
-            data = pd.DataFrame(list(collection.find()))
+            logger.info(f"Databases available: {self.mongo_client.list_database_names()}")
+            logger.info(f"Collections in DB '{db.name}': {db.list_collection_names()}")
 
-            if data.empty:
+            collection = db[self.data_ingestion_config.collection_name]
+            logger.info(f"Using collection: {collection.name}")
+
+            data = list(collection.find())
+            logger.info(f"Fetched {len(data)} records from MongoDB.")
+
+            if len(data) == 0:
                 raise ValueError("No data found in MongoDB collection.")
 
-            if "_id" in data.columns:
-                data.drop(columns=["_id"], inplace=True)
+            df = pd.DataFrame(data)
+            if "_id" in df.columns:
+                df.drop(columns=["_id"], inplace=True)
+            df.dropna(inplace=True)
 
-            data.replace({"NaN": None}, inplace=True)
-            data.dropna(inplace=True)
-
-            logger.info("Data fetched and cleaned successfully.")
-            return data
+            logger.info(f"DataFrame shape after cleaning: {df.shape}")
+            return df
 
         except Exception as e:
             raise NetworkSecurityException(e, sys)
@@ -69,13 +75,13 @@ class DataIngestion:
                 random_state=42
             )
 
-            os.makedirs(os.path.dirname(self.data_ingestion_config.train_file_path), exist_ok=True)
+            os.makedirs(os.path.dirname(self.data_ingestion_config.training_file_path), exist_ok=True)
 
-            train.to_csv(self.data_ingestion_config.train_file_path, index=False)
-            test.to_csv(self.data_ingestion_config.test_file_path, index=False)
+            train.to_csv(self.data_ingestion_config.training_file_path, index=False)
+            test.to_csv(self.data_ingestion_config.testing_file_path, index=False)
 
-            logger.info(f"Train data saved at {self.data_ingestion_config.train_file_path}")
-            logger.info(f"Test data saved at {self.data_ingestion_config.test_file_path}")
+            logger.info(f"Train data saved at {self.data_ingestion_config.training_file_path}")
+            logger.info(f"Test data saved at {self.data_ingestion_config.testing_file_path}")
             return [train, test]
 
         except Exception as e:
@@ -89,8 +95,8 @@ class DataIngestion:
             train, test = self.initiate_train_test_split(data)
 
             artifact = ArtifactEntity(
-                train_file_path=self.data_ingestion_config.train_file_path,
-                test_file_path=self.data_ingestion_config.test_file_path
+                train_file_path=self.data_ingestion_config.training_file_path,
+                test_file_path=self.data_ingestion_config.testing_file_path
             )
             logger.info("Data ingestion pipeline completed successfully.")
             return artifact
