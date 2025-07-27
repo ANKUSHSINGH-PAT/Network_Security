@@ -9,5 +9,6 @@ pymongo
 scikit-learn
 scipy
 dill
+pyaml
 
 #-e .

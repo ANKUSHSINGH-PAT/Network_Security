@@ -1,4 +1,5 @@
 from networksecurity.componenets.data_ingestion import DataIngestion
+from networksecurity.componenets.data_validation import DataValidation
 from networksecurity.entity.config_entity import DataIngestionConfig,DataValidationConfig
 from networksecurity.entity.artifact_entity import ArtifactEntity
 from networksecurity.entity.config_entity import TrainingPipelineConfig
@@ -19,9 +20,12 @@ if __name__ == "__main__":
         data_ingestion = DataIngestion(data_ingestion_config)
         artifact_entity = data_ingestion.initiate_data_ingestion()
         logger.logging.info(f"Data ingestion completed successfully. Artifacts: {artifact_entity}")
-        data
-
-        
+        data_validation_config = DataValidationConfig(training_pipeline_config)
+        data_validation = DataValidation(artifact_entity, data_validation_config)
+        logger.logging.info("Starting data validation process")
+        data_validation_artifact = data_validation.initiate_data_validation()
+        logger.logging.info(f"Data validation completed successfully. Artifacts: {data_validation_artifact}")
+  
     except Exception as e:
         logger.logging.error(f"Error during data ingestion: {e}")
         raise NetworkSecurityException(e, sys)
