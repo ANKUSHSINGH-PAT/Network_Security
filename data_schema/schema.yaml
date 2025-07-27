@@ -1,0 +1,129 @@
+columns:
+  having_IP_Address:
+    dtype: int
+    domain: [-1, 1]
+
+  URL_Length:
+    dtype: int
+    domain: [-1, 0, 1]
+
+  Shortining_Service:
+    dtype: int
+    domain: [1, -1]
+
+  having_At_Symbol:
+    dtype: int
+    domain: [1, -1]
+
+  double_slash_redirecting:
+    dtype: int
+    domain: [1, -1]
+
+  Prefix_Suffix:
+    dtype: int
+    domain: [1, -1]
+
+  having_Sub_Domain:
+    dtype: int
+    domain: [1, 0, -1]
+
+  SSLfinal_State:
+    dtype: int
+    domain: [1, -1]
+
+  Domain_registeration_length:
+    dtype: int
+    domain: [1, -1]
+
+  Favicon:
+    dtype: int
+    domain: [1, -1]
+
+  port:
+    dtype: int
+    domain: [1, -1]
+
+  HTTPS_token:
+    dtype: int
+    domain: [1, -1]
+
+  Request_URL:
+    dtype: int
+    domain: [1, -1]
+
+  URL_of_Anchor:
+    dtype: int
+    domain: [1, 0, -1]
+
+  Links_in_tags:
+    dtype: int
+    domain: [1, 0, -1]
+
+  SFH:
+    dtype: int
+    domain: [1, -1, 0]
+
+  Submitting_to_email:
+    dtype: int
+    domain: [1, -1]
+
+  Abnormal_URL:
+    dtype: int
+    domain: [1, -1]
+
+  Redirect:
+    dtype: int
+    domain: [0, 1]
+
+  on_mouseover:
+    dtype: int
+    domain: [1, -1]
+
+  RightClick:
+    dtype: int
+    domain: [1, -1]
+
+  popUpWidnow:
+    dtype: int
+    domain: [1, -1]
+
+  Iframe:
+    dtype: int
+    domain: [1, -1]
+
+  age_of_domain:
+    dtype: int
+    domain: [1, -1]
+
+  DNSRecord:
+    dtype: int
+    domain: [1, -1]
+
+  web_traffic:
+    dtype: int
+    domain: [1, 0, -1]
+
+  Page_Rank:
+    dtype: int
+    domain: [1, -1]
+
+  Google_Index:
+    dtype: int
+    domain: [1, -1]
+
+  Links_pointing_to_page:
+    dtype: int
+    domain: [0, 1, -1]
+
+  Statistical_report:
+    dtype: int
+    domain: [1, -1]
+
+  Result:
+    dtype: int
+    domain: [1, -1]
+
+metadata:
+  file_type: csv
+  delimiter: ","
+  label_column: Result

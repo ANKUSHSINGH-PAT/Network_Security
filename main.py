@@ -1,5 +1,5 @@
 from networksecurity.componenets.data_ingestion import DataIngestion
-from networksecurity.entity.config_entity import DataIngestionConfig
+from networksecurity.entity.config_entity import DataIngestionConfig,DataValidationConfig
 from networksecurity.entity.artifact_entity import ArtifactEntity
 from networksecurity.entity.config_entity import TrainingPipelineConfig
 import numpy as np
@@ -19,6 +19,7 @@ if __name__ == "__main__":
         data_ingestion = DataIngestion(data_ingestion_config)
         artifact_entity = data_ingestion.initiate_data_ingestion()
         logger.logging.info(f"Data ingestion completed successfully. Artifacts: {artifact_entity}")
+        data
 
         
     except Exception as e:
