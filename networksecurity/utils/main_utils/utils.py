@@ -5,6 +5,7 @@ import sys
 import os
 import dill
 import pickle
+import numpy as np
 
 
 def read_yaml_file(file_path: str) -> dict:
@@ -33,5 +34,34 @@ def write_yaml_file(file_path: str, content:object,replace:bool=False) -> None:
         with open(file_path, 'w') as file:
             yaml.dump(content, file)
             
+    except Exception as e:
+        raise NetworkSecurityException(e, sys) from e
+    
+def save_numpy_array_data(file_path: str, array: np.array):
+    """
+    Saves a numpy array to a file.
+    :param file_path: Path to the file where the array will be saved.
+    :param array: Numpy array to save.
+    """
+    try:
+        dir_path = os.path.dirname(file_path)
+        os.makedirs(dir_path, exist_ok=True)
+        with open(file_path, 'wb') as file_obj:
+            np.save(file_obj, array)
+    except Exception as e:
+        raise NetworkSecurityException(e, sys) from e
+
+def save_object(file_path: str, obj: object) -> None:
+    """
+    Saves an object to a file using pickle.
+    :param file_path: Path to the file where the object will be saved.
+    :param obj: Object to save.
+    """
+    try:
+        logger.info("Entered the save_object method of MainUtils class")
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, 'wb') as file_obj:
+            pickle.dump(obj, file_obj)
+        logger.info("Exited the save_object method of MainUtils class")
     except Exception as e:
         raise NetworkSecurityException(e, sys) from e
