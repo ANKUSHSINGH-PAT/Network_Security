@@ -18,3 +18,19 @@ class DataTransformationArtifact:
     transformed_object_file_path: str
     transformed_train_file_path: str
     transformed_test_file_path: str
+
+
+@dataclass
+class ModelTrainerArtifact:
+    trained_model_file_path: str
+    model_accuracy: float
+    is_trained: bool
+    message: str
+
+@dataclass
+class ClassificationMetricArtifact:
+    accuracy: float
+    precision: float
+    recall: float
+    f1_score: float
+    confusion_matrix: dict
