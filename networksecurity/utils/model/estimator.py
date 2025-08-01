@@ -1,32 +1,23 @@
-from networksecurity.constant.training_pipeline import MODEL_FILE_NAME, SAVED_MODEL_DIR
+from networksecurity.constant.training_pipeline import SAVED_MODEL_DIR,MODEL_FILE_NAME
 
-import os,sys
+import os
+import sys
+
 from networksecurity.exception.exceptions import NetworkSecurityException
-from networksecurity.entity.config_entity import ModelTrainerConfig
-from networksecurity.entity.artifact_entity import ModelTrainerArtifact, DataTransformationArtifact
-from networksecurity.utils.main_utils.utils import load_numpy_array_data, load_object
-from networksecurity.logging.logger import logger
-
+from networksecurity.logging.logger import logging
 
 class NetworkModel:
-    def __init__(self,preprocessor, model):
+    def __init__(self,preprocessor,model):
         try:
-
             self.preprocessor = preprocessor
             self.model = model
         except Exception as e:
-            raise NetworkSecurityException(e, sys) from e
-        
-    def predict(self, X):
-        """
-        Predicts the labels for the given input data.
-        
-        :param X: Input data for prediction.
-        :return: Predicted labels.
-        """
+            raise NetworkSecurityException(e,sys)
+    
+    def predict(self,x):
         try:
-            X_transformed = self.preprocessor.transform(X)
-            predictions = self.model.predict(X_transformed)
-            return predictions
+            x_transform = self.preprocessor.transform(x)
+            y_hat = self.model.predict(x_transform)
+            return y_hat
         except Exception as e:
-            raise NetworkSecurityException(e, sys) from e
+            raise NetworkSecurityException(e,sys)

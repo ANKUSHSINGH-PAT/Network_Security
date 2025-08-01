@@ -8,8 +8,10 @@ from networksecurity.logging import logger
 from networksecurity.constant.training_pipeline import MODEL_FILE_NAME, SAVED_MODEL_DIR
 from networksecurity.entity.artifact_entity import ModelTrainerArtifact, DataTransformationArtifact
 from networksecurity.utils.main_utils.utils import load_numpy_array_data, load_object
+from networksecurity.utils.ml_utils.metric.classification_metric import get_classification_score
+from networksecurity.utils.model.estimator import NetworkModel
 
-from networksecurity.utils.ml_utils.metric.classification_metric import evaluate_classification_model
+from networksecurity.utils.main_utils.utils import save_object,evaluate_models
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import r2_score
@@ -22,7 +24,7 @@ from sklearn.ensemble import (
 )
 
 
-class model_trainer:
+class ModelTrainer:
     def __init__(self, model_trainer_config: ModelTrainerConfig,
                  data_transformation_artifact: DataTransformationArtifact):
         try:
@@ -31,7 +33,7 @@ class model_trainer:
         
         except Exception as e:
             raise NetworkSecurityException(e, sys) from e
-    def train_model(self, X_train, y_train):
+    def train_model(self, X_train, y_train,x_test, y_test):
         """
         Trains the model using the provided training data.
         
@@ -90,13 +92,13 @@ class model_trainer:
         classification_train_metric=get_classification_score(y_true=y_train,y_pred=y_train_pred)
         
         ## Track the experiements with mlflow
-        self.track_mlflow(best_model,classification_train_metric)
+       
 
 
         y_test_pred=best_model.predict(x_test)
         classification_test_metric=get_classification_score(y_true=y_test,y_pred=y_test_pred)
 
-        self.track_mlflow(best_model,classification_test_metric)
+        #self.track_mlflow(best_model,classification_test_metric)
 
         preprocessor = load_object(file_path=self.data_transformation_artifact.transformed_object_file_path)
             
@@ -114,7 +116,7 @@ class model_trainer:
                              train_metric_artifact=classification_train_metric,
                              test_metric_artifact=classification_test_metric
                              )
-        logging.info(f"Model trainer artifact: {model_trainer_artifact}")
+        logger.logging.info(f"Model trainer artifact: {model_trainer_artifact}")
         return model_trainer_artifact
 
         
@@ -143,6 +145,7 @@ class model_trainer:
                 test_arr[:,-1]
             )
 
-            model=self.train_model(x_train, y_train)
+            model_trainer_artifact=self.train_model(x_train, y_train,x_test, y_test)
+            return model_trainer_artifact
         except Exception as e:
             raise NetworkSecurityException(e, sys) from e

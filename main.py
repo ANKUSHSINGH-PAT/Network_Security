@@ -1,8 +1,10 @@
 from networksecurity.componenets.data_ingestion import DataIngestion
 from networksecurity.componenets.data_validation import DataValidation
-from networksecurity.entity.config_entity import DataIngestionConfig,DataValidationConfig,DataTransformationConfig,TrainingPipelineConfig
-from networksecurity.entity.artifact_entity import ArtifactEntity
+from networksecurity.entity.config_entity import DataIngestionConfig,DataValidationConfig,DataTransformationConfig,TrainingPipelineConfig,ModelTrainerConfig
+from networksecurity.entity.artifact_entity import ArtifactEntity,DataTransformationArtifact,ClassificationMetricArtifact,ModelTrainerArtifact
 from networksecurity.componenets.data_transformation import DataTransformation
+from networksecurity.utils.model.estimator import NetworkModel
+from networksecurity.componenets.model_trainer import ModelTrainer
 import numpy as np
 import os
 import sys
@@ -30,7 +32,20 @@ if __name__ == "__main__":
         dataTransformation= DataTransformation(data_validation_artifact, data_transformation_config)
         dataTransformation_artificat=dataTransformation.initiate_data_transformation()
         print(f"Data transformation artifacts: {dataTransformation_artificat}")
+
+        logger.logging.info("Data transformation process completed successfully")
+        logger.logging.info(f"Data transformation artifacts: {dataTransformation_artificat}")   
+
         logger.logging.info("Data transformation completed successfully")
+
+        logger.logging.info("Starting model training process")
+        logger.logging.info("Model Training sstared")
+        model_trainer_config=ModelTrainerConfig(training_pipeline_config)
+        model_trainer=ModelTrainer(model_trainer_config=model_trainer_config,data_transformation_artifact=dataTransformation_artificat)
+        model_trainer_artifact=model_trainer.initiate_model_trainer()
+
+        logger.logging.info("Model Training artifact created")
+
   
     except Exception as e:
         logger.logging.error(f"Error during data ingestion: {e}")
