@@ -11,5 +11,5 @@ scipy
 dill
 pyaml
 mlflow
-python-dotenv
+joblib
 #-e .
