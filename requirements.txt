@@ -10,5 +10,6 @@ scikit-learn
 scipy
 dill
 pyaml
-
+mlflow
+python-dotenv
 #-e .

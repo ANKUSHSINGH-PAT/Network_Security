@@ -1,6 +1,8 @@
 import os
 import sys
 import pickle
+import mlflow
+from dotenv import load_dotenv
 
 from networksecurity.entity.config_entity import ModelTrainerConfig
 from networksecurity.exception.exceptions import NetworkSecurityException
@@ -22,6 +24,17 @@ from sklearn.ensemble import (
     GradientBoostingClassifier,
     RandomForestClassifier,
 )
+load_dotenv()
+
+# Access them
+mlflow_uri = os.getenv("MLFLOW_TRACKING_URI")
+username = os.getenv("MLFLOW_TRACKING_USERNAME")
+password = os.getenv("MLFLOW_TRACKING_PASSWORD")
+
+import mlflow
+
+mlflow.set_tracking_uri(mlflow_uri)
+mlflow.set_experiment("Network_Security_Experiment")
 
 
 class ModelTrainer:
@@ -33,6 +46,27 @@ class ModelTrainer:
         
         except Exception as e:
             raise NetworkSecurityException(e, sys) from e
+        
+    def track_model(self, model, classification_metric):
+        """
+        Tracks the model and its metrics using MLflow.
+        
+        :param model: The trained model to be tracked.
+        :param classification_metric: The classification metrics of the model.
+        """
+        try:
+            with mlflow.start_run():
+                f1_score = classification_metric.f1_score
+                precision_score = classification_metric.precision_score
+                recall_score = classification_metric.recall_score
+
+                mlflow.log_metric("f1_score", f1_score)
+                mlflow.log_metric("precision_score", precision_score)
+                mlflow.log_metric("recall_score", recall_score)
+
+                mlflow.sklearn.log_model(model, "model")
+        except Exception as e:
+            logger.logging.error(f"Error tracking model with MLflow: {e}")
     def train_model(self, X_train, y_train,x_test, y_test):
         """
         Trains the model using the provided training data.
@@ -90,6 +124,8 @@ class ModelTrainer:
         y_train_pred=best_model.predict(X_train)
 
         classification_train_metric=get_classification_score(y_true=y_train,y_pred=y_train_pred)
+
+        self.track_model(best_model,classification_train_metric)
         
         ## Track the experiements with mlflow
        
@@ -97,6 +133,7 @@ class ModelTrainer:
 
         y_test_pred=best_model.predict(x_test)
         classification_test_metric=get_classification_score(y_true=y_test,y_pred=y_test_pred)
+        self.track_model(best_model,classification_test_metric)
 
         #self.track_mlflow(best_model,classification_test_metric)
 
