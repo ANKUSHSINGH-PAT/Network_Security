@@ -67,7 +67,7 @@ async def train_model(background_tasks: BackgroundTasks):
 
     except Exception as e:
         logging.error(str(e))
-        #raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+        #raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}") --
 
 @app.post("/predict")
 async def predict(request: Request,file: UploadFile = File(...)):
